@@ -1,0 +1,6 @@
+*.gz
+*·log
+*.txt
+mtk_bpf_patcher/utils/__pycache__/
+mtk_bpf_patcher/data/__pycache__/
+*.py[cod]

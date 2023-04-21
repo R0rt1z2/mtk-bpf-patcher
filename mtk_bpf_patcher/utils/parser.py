@@ -1,5 +1,5 @@
 import os
-import zlib
+import gzip
 
 try:
     from data.Types import FileTypes
@@ -68,8 +68,7 @@ class Parser:
     '''Decompresses the given data using gzip.'''
     def gzip_decompress(self, data):
         try:
-            # ZLIB expects the data to be prepended with a 16-bit header.
-            return zlib.decompress(data, wbits=16 + zlib.MAX_WBITS)
+            return gzip.decompress(data)
         except zlib.error as e:
             self.logger.log(2, e)
 
@@ -77,8 +76,7 @@ class Parser:
     def gzip_compress(self, data):
         try:
             # For whatever reason, ZLIB doesn't prepend the data with a 16-bit header.
-            # As a quick workaround, use system's gzip to compress the data correctly.
-            return zlib.compress(data, level=9) # Default to MAX compression ratio.
+            return gzip.compress(data, compresslevel=9) # Default to MAX compression ratio.
         except Exception as e:
             self.logger.log(2, e)
 

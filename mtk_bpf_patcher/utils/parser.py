@@ -1,5 +1,6 @@
 import os
 import gzip
+import struct
 
 try:
     from data.Types import FileTypes
@@ -50,6 +51,12 @@ class Parser:
         # Return what we read.
         return data
 
+    '''Seeks to the specified offset and reads the specified amount of bytes.'''
+    def seek_and_read(self, offset, size):
+        # Seek to the specified offset and read the specified amount of bytes.
+        self.input_handle.seek(offset)
+        return self.input_handle.read(size)
+
     '''Decides the type of the input file.'''
     def decide_type(self):
         # We use the first 8 bytes as a reference to determine the type of the input file.
@@ -93,7 +100,26 @@ class Parser:
 
         # We don't support boot images yet.
         if self.input_type == FileTypes.BOOT_IMAGE:
-            self.logger.log(2, "Boot images are not supported yet!")
+            self.logger.log(1, f"Extracting kernel from {self.input}...")
+            # Extract the kernel from the boot image.
+            self.input_handle.seek(0x4040 if self.input_handle.read(4) == b'BFBF' else 0)
+
+            # Use the header to extract the kernel information.
+            magic, kernel_size, kernel_addr, ramdisk_size, ramdisk_addr, second_size, second_addr, \
+                tags_addr, page_size, dt_size, name, cmdline = ByteSequences.boot_image_header.unpack(self.input_handle.read(ByteSequences.boot_image_header.size))
+
+            # Decide the type again since we don't know if the kernel is compressed or not.
+            self.input_handle.seek(page_size) # So decide_type() can read the header(s).
+            self.input_type = self.decide_type()
+
+            if self.input_type == FileTypes.IMAGE_GZ:
+                # Decompress the kernel.
+                return self.gzip_decompress(self.seek_and_read(page_size, kernel_size))
+            else:
+                # Return the kernel.
+                return self.seek_and_read(page_size, kernel_size)
+
+            self.logger.log(2, f"Could not extract kernel from boot image!")
 
     '''Patches the kernel data by replacing the given bytes sequence with the given replacement.'''
     def patch_kernel_data(self, data, bytes, replacement):

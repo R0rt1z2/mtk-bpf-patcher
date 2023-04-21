@@ -1,3 +1,5 @@
+import struct
+
 try:
     from data.Types import FileTypes
 except ImportError:
@@ -14,3 +16,5 @@ class ByteSequences:
         bytes.fromhex("0a2450292801080a087d0a1b28010035") : bytes.fromhex("0a2450292801080a087d0a1b1f2003d5"), # 4.14
         bytes.fromhex("48010035822240b980420491e10313aa") : bytes.fromhex("1f2003d5822240b980420491e10313aa"), # 4.19
     }
+
+    boot_image_header = struct.Struct('8s I I I I I I I I I 4x 16s 512s 8x')

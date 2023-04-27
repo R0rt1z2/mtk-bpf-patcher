@@ -56,7 +56,9 @@ def main() -> None:
     # If the file type is a compressed image, we need to compress the patched
     # data.
     if parser.input_type == FileTypes.IMAGE_GZ:
-        args.output_file = f'{args.output_file}.gz' # For consistency.
+        # Only add the .gz extension if it's not already there.
+        if not args.output_file.endswith(".gz"):
+            args.output_file = f'{args.output_file}.gz' # For consistency.
         logger.log(1, "Compressing the patched kernel binary...")
         patched_data = parser.gzip_compress(patched_data)
 

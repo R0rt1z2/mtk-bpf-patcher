@@ -33,6 +33,7 @@ def main() -> None:
     # Determine the file type. This is automatically done by the parser's
     # constructor.
     parser = Parser(args.input_file, logger)
+    logger.log(0, f"Detected {parser.input_type.name} for {args.input_file}!")
 
     # Try to get the kernel data (the binary itself).
     kernel_data = parser.get_kernel_data()

@@ -88,7 +88,6 @@ class Parser:
         # Check if the header contains any of the supported signatures.
         for signature, file_type in ByteSequences.signature_map.items():
             if signature in header or signature in header[::-1]:
-                self.logger.log(0, f"Detected {file_type.name} for {self.input}!")
                 return file_type
 
         # No known signature was found default to binary and hope for the best.

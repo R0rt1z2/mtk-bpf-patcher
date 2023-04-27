@@ -10,8 +10,13 @@ except ImportError:
     from mtk_bpf_patcher.data.Sequences import ByteSequences
 
 class Parser:
-    '''Initializes the parser.'''
-    def __init__(self, input, logger):
+    def __init__(self, input, logger) -> None:
+        '''
+        Constructor for the parser.
+        @param input: The input file.
+        @param logger: The logger object.
+        return: None
+        '''
         self.logger = logger
         self.input_handle = None
         self.input = os.path.abspath(input)
@@ -29,16 +34,25 @@ class Parser:
         # Decide the type of the input file.
         self.input_type = self.decide_type()
 
-    '''Destructor for the parser.'''
-    def __del__(self):
+    def __del__(self) -> None:
+        '''
+        Destructor for the parser.
+        return: None
+        '''
         if self.input_handle:
             try:
                 self.input_handle.close()
             except OSError:
                 exit("FATAL: could not close input file!")
 
-    '''Reads the specified amount of bytes from the input file.'''
-    def read_and_seek(self, size, offset = 0, handle = None):
+    def read_and_seek(self, size, offset = 0, handle = None) -> bytes:
+        '''
+        Reads the specified amount of bytes from the input file.
+        @param size: The amount of bytes to read.
+        @param offset: The offset to seek to after reading.
+        @param handle: The handle to read from.
+        return: The data that was read.
+        '''
         # Let the user specify a handle to read from.
         if not handle:
             handle = self.input_handle
@@ -51,14 +65,23 @@ class Parser:
         # Return what we read.
         return data
 
-    '''Seeks to the specified offset and reads the specified amount of bytes.'''
-    def seek_and_read(self, offset, size):
+    def seek_and_read(self, offset, size) -> bytes:
+        '''
+        Seeks to the specified offset and reads the specified amount of bytes.
+        @param offset: The offset to seek to.
+        @param size: The amount of bytes to read.
+        return: The data that was read.
+        '''
+
         # Seek to the specified offset and read the specified amount of bytes.
         self.input_handle.seek(offset)
         return self.input_handle.read(size)
 
-    '''Decides the type of the input file.'''
-    def decide_type(self):
+    def decide_type(self) -> FileTypes:
+        '''
+        Decides the type of the input file.
+        return: The type of the input file.
+        '''
         # We use the first 8 bytes as a reference to determine the type of the input file.
         header = self.read_and_seek(8, 0)
 
@@ -72,23 +95,33 @@ class Parser:
         self.logger.log(1, f"Could not detect file type for {self.input}! Defaulting to binary.")
         return FileTypes.KERNEL_BIN
 
-    '''Decompresses the given data using gzip.'''
-    def gzip_decompress(self, data):
+    def gzip_decompress(self, data) -> bytes:
+        '''
+        Decompresses the given data using gzip.
+        @param data: The data to decompress.
+        return: The decompressed data.
+        '''
         try:
             return gzip.decompress(data)
         except zlib.error as e:
             self.logger.log(2, e)
 
-    '''Compresses the given data using gzip.'''
-    def gzip_compress(self, data):
+    def gzip_compress(self, data) -> bytes:
+        '''
+        Compresses the given data using gzip.
+        @param data: The data to compress.
+        return: The compressed data.
+        '''
         try:
-            # For whatever reason, ZLIB doesn't prepend the data with a 16-bit header.
             return gzip.compress(data, compresslevel=9) # Default to MAX compression ratio.
         except Exception as e:
             self.logger.log(2, e)
 
-    '''Returns the kernel (binary) data from the input file.'''
-    def get_kernel_data(self):
+    def get_kernel_data(self) -> bytes:
+        '''
+        Returns the kernel (binary) data from the input file.
+        return: The kernel data.
+        '''
         # If the input file is a kernel binary already, we don't need to do anything.
         if self.input_type == FileTypes.KERNEL_BIN:
             return self.read_and_seek(os.path.getsize(self.input))
@@ -121,8 +154,14 @@ class Parser:
 
             self.logger.log(2, f"Could not extract kernel from boot image!")
 
-    '''Patches the kernel data by replacing the given bytes sequence with the given replacement.'''
-    def patch_kernel_data(self, data, bytes, replacement):
+    def patch_kernel_data(self, data, bytes, replacement) -> bytes:
+        '''
+        Patches the kernel data by replacing the given bytes sequence with the given replacement.
+        @param data: The kernel data to patch.
+        @param bytes: The bytes sequence to replace.
+        @param replacement: The replacement for the bytes sequence.
+        return: The patched kernel data.
+        '''
         # Make sure the bytes sequence is in the kernel data.
         if bytes not in data:
             self.logger.log(4, f"Could not find '{bytes.hex()}' in the kernel data!") # This is fine, we might be trying multiple sequences.

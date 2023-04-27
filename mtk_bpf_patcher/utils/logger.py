@@ -10,8 +10,13 @@ VERBOSITY_LEVELS = {
 }
 
 class Logger:
-    '''Initializes the logger.'''
-    def __init__(self, log_file = None, debug = False):
+    def __init__(self, log_file = None, debug = False) -> None:
+        '''
+        Constructor for the logger.
+        @param log_file: The log file to write to.
+        @param debug: Whether to enable debug mode.
+        return: None
+        '''
         self.log_handle = None
         self.debug = debug
 
@@ -24,16 +29,24 @@ class Logger:
             except OSError:
                 print("Error: could not open log file")
 
-    '''Destructor for the logger.'''
-    def __del__(self):
+    def __del__(self) -> None:
+        '''
+        Destructor for the logger.
+        return: None
+        '''
         if self.log_handle:
             try:
                 self.log_handle.close()
             except OSError:
                 exit("FATAL: could not close log file!")
 
-    '''Logs a message to the console and/or log file.'''
-    def log(self, verbosity, msg):
+    def log(self, verbosity, msg) -> None:
+        '''
+        Logs a message to the console and the log file.
+        @param verbosity: The verbosity level of the message.
+        @param msg: The message to log.
+        return: None
+        '''
         message = f"{VERBOSITY_LEVELS[verbosity]} {msg}\033[0m"
         if verbosity == 4 and not self.debug: return
         print(message)
@@ -44,8 +57,11 @@ class Logger:
         # If the message is an error, exit.
         if verbosity == 2: exit(1)
 
-    '''Prints our fancy banner.'''
-    def print_banner(self):
+    def print_banner(self) -> None:
+        '''
+        Prints the banner.
+        return: None
+        '''
         print("\033[0;35m")
         print("  _            __               _       _               ")
         print(" | |__  _ __  / _|  _ __   __ _| |_ ___| |__   ___ _ __ ")

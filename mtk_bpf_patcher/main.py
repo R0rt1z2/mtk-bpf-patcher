@@ -13,7 +13,11 @@ except ImportError:
     from mtk_bpf_patcher.data.Sequences import ByteSequences
     from mtk_bpf_patcher.data.Types import FileTypes
 
-def main():
+def main() -> None:
+    '''
+    The main function.
+    return: None
+    '''
     # Parse the command line arguments.
     argparser = argparse.ArgumentParser()
     argparser.add_argument("input_file", help="The input file")

@@ -6,6 +6,12 @@ except ImportError:
     from mtk_bpf_patcher.data.Types import FileTypes
 
 class ByteSequences:
+    '''
+    This class contains all the byte sequences that are used to identify
+    the type of the input file. It also covers the known byte sequences
+    that are used to identify the section of the kernel image that needs
+    to be patched.
+    '''
     signature_map = {
         b'ANDROID!': FileTypes.BOOT_IMAGE,
         b'\x1f\x8b\x08': FileTypes.IMAGE_GZ

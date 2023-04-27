@@ -9,14 +9,9 @@ This is a simple Python script that applies a binary patch to the given kernel i
 The patch applied by this script is quite simple. It just NOPs the offending code, in order to allow the `memcpy()` call to be executed.
 
 ### Supported kernel(s)
+* This tool has only been tested with `4.14.X` and `4.19.X` based kernel(s).
 * If your kernel isn't listed, feel free to try the script and report back the results.
 * It's possible that each version uses different set of instructions, so beware of that.
-* The following table shows the kernels that have been tested with this script.
-
-| Kernel version | Tested | Working |
-|----------------|--------|---------|
-| 4.14.X         | Yes    | Yes     |
-| 4.19.X         | Yes    | Yes     |
 
 ### Installation
 #### Linux
